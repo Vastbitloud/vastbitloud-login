@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vastbitloud - Bem-vindo</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #021235; /* azul escuro */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+            width: 300px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: none;
+            width: 100%;
+            border-radius: 8px;
+            background: #0D6EFD;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0955c4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>Vastbitloud</h2>
+        <p>Bem-vindo(a)! Clique abaixo para entrar:</p>
+        <button onclick="window.location.href='login.html'">Ir para Login</button>
+    </div>
+
+</body>
+</html>
