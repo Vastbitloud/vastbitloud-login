@@ -1,6 +1,6 @@
-// Função para validar campos
-function validarCampos(user, pass) {
-  if (!user || !pass) {
+// Validação simples
+function validarCampos(phone, pass) {
+  if (!phone || !pass) {
     alert("Preencha todos os campos!");
     return false;
   }
@@ -9,13 +9,13 @@ function validarCampos(user, pass) {
 
 // Cadastro
 function registerUser() {
-  const user = document.getElementById("user").value.trim();
+  const phone = document.getElementById("phone").value.trim();
   const pass = document.getElementById("pass").value.trim();
 
-  if (!validarCampos(user, pass)) return;
+  if (!validarCampos(phone, pass)) return;
 
-  // Salva no localStorage
-  localStorage.setItem("vast_user", user);
+  // Salva dados no localStorage
+  localStorage.setItem("vast_phone", phone);
   localStorage.setItem("vast_pass", pass);
 
   alert("Conta criada com sucesso!");
@@ -24,18 +24,17 @@ function registerUser() {
 
 // Login
 function login() {
-  const user = document.getElementById("user").value.trim();
+  const phone = document.getElementById("phone").value.trim();
   const pass = document.getElementById("pass").value.trim();
 
-  if (!validarCampos(user, pass)) return;
+  if (!validarCampos(phone, pass)) return;
 
-  const savedUser = localStorage.getItem("vast_user");
+  const savedPhone = localStorage.getItem("vast_phone");
   const savedPass = localStorage.getItem("vast_pass");
 
-  if (user === savedUser && pass === savedPass) {
-    // Redireciona para site real após login
+  if (phone === savedPhone && pass === savedPass) {
     window.location.href = "https://sites.google.com/view/vastbitloud";
   } else {
-    alert("Usuário ou senha incorretos!");
+    alert("Telefone ou senha incorretos!");
   }
 }
