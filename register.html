@@ -2,23 +2,89 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Essencial para celular -->
 <title>Cadastro - Vastbitloud</title>
+
 <style>
- body{margin:0;height:100vh;display:flex;justify-content:center;align-items:center;background:#021633;font-family:Arial;color:white;}
- .card{background:rgba(255,255,255,0.06);padding:30px;width:330px;border-radius:12px;backdrop-filter:blur(10px);text-align:center;}
- input{width:100%;padding:12px;margin-top:10px;border-radius:6px;border:none;outline:none;}
- button{margin-top:15px;width:100%;padding:12px;border:none;border-radius:6px;background:#0066ff;color:white;font-size:16px;cursor:pointer;}
- a{color:#66aaff;font-size:14px;display:block;margin-top:10px;}
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #021633;
+    font-family: Arial, sans-serif;
+    color: white;
+    padding: 20px; /* Evita corte em celulares pequenos */
+    box-sizing: border-box;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.06);
+    padding: 30px;
+    width: 100%;
+    max-width: 330px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+  }
+
+  input::placeholder {
+    color: #d0d0d0;
+  }
+
+  button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #0066ff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #0050c7;
+  }
+
+  a {
+    color: #66aaff;
+    font-size: 14px;
+    display: block;
+    margin-top: 12px;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
 </style>
 </head>
+
 <body>
 <div class="card">
-<h2>Criar Conta</h2>
-<input id="user" type="text" placeholder="Usuário">
-<input id="pass" type="password" placeholder="Senha">
-<button onclick="registerUser()">Cadastrar</button>
-<a href="login.html">Já tenho conta</a>
+  <h2>Criar Conta</h2>
+  <input id="user" type="text" placeholder="Usuário">
+  <input id="pass" type="password" placeholder="Senha">
+  <button onclick="registerUser()">Cadastrar</button>
+  <a href="login.html">Já tenho conta</a>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>
