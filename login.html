@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Vastbitloud</title>
 <style>
-  /* Reset e corpo */
   html, body {
     margin: 0;
     padding: 0;
@@ -15,7 +14,6 @@
     color: white;
   }
 
-  /* Container centralizado */
   body {
     display: flex;
     justify-content: center;
@@ -24,7 +22,6 @@
     padding: 10px;
   }
 
-  /* Cartão */
   .card {
     background: rgba(255,255,255,0.06);
     padding: 30px 20px;
@@ -35,7 +32,6 @@
     box-sizing: border-box;
   }
 
-  /* Inputs e botão */
   input {
     width: 100%;
     padding: 12px;
@@ -60,9 +56,7 @@
     transition: background 0.3s;
   }
 
-  button:hover {
-    background: #0050cc;
-  }
+  button:hover { background: #0050cc; }
 
   a {
     color: #66aaff;
@@ -72,15 +66,13 @@
     text-decoration: none;
   }
 
-  a:hover {
-    text-decoration: underline;
-  }
+  a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="card">
   <h2>Entrar</h2>
-  <input id="user" type="text" placeholder="Usuário">
+  <input id="phone" type="tel" placeholder="Telefone">
   <input id="pass" type="password" placeholder="Senha">
   <button onclick="login()">Entrar</button>
   <a href="register.html">Criar conta</a>
