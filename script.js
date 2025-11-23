@@ -1,6 +1,7 @@
 // Seleciona elementos
 const userInput = document.getElementById("user");
 const passInput = document.getElementById("pass");
+const phoneInput = document.getElementById("phone");
 
 // Função para exibir mensagens estilizadas
 function showMessage(message, type = "error") {
@@ -28,20 +29,23 @@ function showMessage(message, type = "error") {
 function registerUser() {
   const user = userInput.value.trim();
   const pass = passInput.value.trim();
+  const phone = phoneInput.value.trim();
 
-  if (!user || !pass) {
+  if (!user || !pass || !phone) {
     showMessage("Preencha todos os campos!");
     return;
   }
 
   localStorage.setItem("vast_user", user);
   localStorage.setItem("vast_pass", pass);
+  localStorage.setItem("vast_phone", phone);
 
   showMessage("Conta criada com sucesso!", "success");
 
   // Limpa campos
   userInput.value = "";
   passInput.value = "";
+  phoneInput.value = "";
 
   setTimeout(() => {
     window.location.href = "login.html";
@@ -52,24 +56,25 @@ function registerUser() {
 function login() {
   const user = userInput.value.trim();
   const pass = passInput.value.trim();
+  const phone = phoneInput.value.trim();
 
   const savedUser = localStorage.getItem("vast_user");
   const savedPass = localStorage.getItem("vast_pass");
+  const savedPhone = localStorage.getItem("vast_phone");
 
-  if (user === savedUser && pass === savedPass) {
+  if(user === savedUser && pass === savedPass /* opcional: && phone === savedPhone */) {
     showMessage("Login realizado com sucesso!", "success");
     setTimeout(() => {
       window.location.href = "https://sites.google.com/view/vastbitloud";
     }, 1000);
   } else {
     showMessage("Usuário ou senha incorretos!");
-    // Apaga senha do campo
     passInput.value = "";
   }
 }
 
 // Permite "Enter" para enviar formulário
-[userInput, passInput].forEach(input => {
+[userInput, passInput, phoneInput].forEach(input => {
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
       document.activeElement === passInput ? login() : null;
