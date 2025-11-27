@@ -1,139 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Minha Equipe</title>
-
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b0f17;
-    color: #ffffff;
-  }
-
-  .header {
-    background: linear-gradient(180deg, #0f1724, #0b0f17);
-    padding: 40px 20px;
-    text-align: center;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  }
-
-  .header h2 { margin: 0; font-size: 24px; }
-  .header p { margin-top: 8px; font-size: 14px; color: #b3b3b3; }
-
-  .container { padding: 20px; }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .card {
-    background: #111722;
-    padding: 18px;
-    border-radius: 14px;
-    text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-  }
-
-  .card h3 { margin: 0; font-size: 18px; color: #4da3ff; }
-  .card span { display: block; margin-top: 5px; color: #b3b3b3; }
-
-  .generator {
-    margin-top: 30px;
-    background: #0f1724;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.4);
-  }
-
-  input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: #1a2333;
-    color: #fff;
-    margin-top: 10px;
-  }
-
-  button {
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: #4da3ff;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  #msgCopiado {
-    margin-top: 10px;
-    color: #00ff7f;
-    font-size: 14px;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
+body{margin:0;font-family:Arial;background:#0b0f17;color:#fff}
+.header{background:linear-gradient(180deg,#0f1724,#0b0f17);padding:36px 18px;text-align:center;border-bottom-left-radius:20px;border-bottom-right-radius:20px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.container{padding:18px}
+.card{background:#111722;padding:16px;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.3);margin-bottom:12px}
+input{width:100%;padding:10px;border-radius:8px;border:none;background:#1a2333;color:#fff}
+button{width:100%;padding:12px;border-radius:8px;border:none;background:#4da3ff;color:#000;cursor:pointer}
+#msgCopiado{color:#00ff7f;text-align:center;opacity:0;transition:opacity .3s;margin-top:8px}
 </style>
 </head>
-
 <body>
-
-<div class="header">
-  <h2>Minha Equipe</h2>
-  <p>Acompanhe seu desempenho</p>
-</div>
-
+<div class="header"><h2>Minha Equipe</h2><p style="color:#b3b3b3;margin:6px 0 0">Acompanhe seu desempenho</p></div>
 <div class="container">
+  <div class="card"><h3 id="bonus" style="color:#4da3ff;margin:0">R$0.00</h3><div style="color:#b3b3b3">BÔNUS</div></div>
+  <div class="card"><h3 id="invest" style="color:#4da3ff;margin:0">R$0.00</h3><div style="color:#b3b3b3">INVESTIDO</div></div>
+  <div class="card"><h3 id="ativosCampo" style="color:#4da3ff;margin:0">0</h3><div style="color:#b3b3b3">ATIVOS</div></div>
+  <div class="card"><h3 id="membroCampo" style="color:#4da3ff;margin:0">0</h3><div style="color:#b3b3b3">CONVIDADOS</div></div>
 
-  <div class="grid">
-    <div class="card"><h3>R$0.00</h3><span>BÔNUS</span></div>
-    <div class="card"><h3>R$0.00</h3><span>INVESTIDO</span></div>
-    <div class="card"><h3 id="ativosCampo">0</h3><span>ATIVOS</span></div>
-    <div class="card"><h3 id="membroCampo">0</h3><span>CONVIDADOS</span></div>
-  </div>
-
-  <div class="generator">
-    <h3>Seu Código de Convite</h3>
+  <div class="card">
+    <h3 style="margin:0 0 8px">Seu Código de Convite</h3>
     <input id="linkFinal" readonly>
-
-    <button onclick="copiar()">Copiar Código</button>
-
+    <button id="btnCopiar">Copiar Código</button>
     <div id="msgCopiado">Código copiado!</div>
   </div>
-
 </div>
 
 <script>
-const userData = JSON.parse(localStorage.getItem("vast_userdata"));
-
-if (!userData) {
-  window.location.href = "index.html";
-}
-
+const userData = JSON.parse(localStorage.getItem('vast_userdata')||'null');
+if(!userData){ window.location.href='index.html'; throw ''; }
 const codigo = userData.myCode;
+document.getElementById('linkFinal').value = location.origin + location.pathname.replace(/index\\.html$/,'').replace(/equipe\\.html$/,'') + '?codigo='+codigo;
+// simplificado: usa origin + pathname base. Se preferir pode colocar URL completa fixa.
 
-document.getElementById("linkFinal").value =
-  `https://vastbitloud.github.io/vastbitloud-login/?codigo=${codigo}`;
-
-function copiar() {
-  const campo = document.getElementById("linkFinal");
+document.getElementById('btnCopiar').addEventListener('click', ()=>{
+  const campo=document.getElementById('linkFinal');
   campo.select();
-  document.execCommand("copy");
-
-  msgCopiado.style.opacity = 1;
-  setTimeout(() => msgCopiado.style.opacity = 0, 2000);
-}
+  document.execCommand('copy');
+  const msg=document.getElementById('msgCopiado');
+  msg.style.opacity=1;
+  setTimeout(()=>msg.style.opacity=0,1600);
+});
 </script>
-
 </body>
 </html>
