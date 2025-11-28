@@ -4,80 +4,151 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Minha Equipe</title>
-<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  color:#fff;
+
+  background:url('bg-login.png') no-repeat center center fixed;
+  background-size:cover;
+}
+
+.header{
+  background:rgba(0,0,0,0.55);
+  padding:36px 18px;
+  text-align:center;
+  border-bottom-left-radius:20px;
+  border-bottom-right-radius:20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.4);
+  backdrop-filter:blur(6px);
+}
+
+.container{
+  padding:18px;
+}
+
+.card{
+  background:rgba(0,0,0,0.55);
+  padding:16px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.3);
+  margin-bottom:12px;
+  backdrop-filter:blur(6px);
+}
+
+input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:#1a2333;
+  color:#fff;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  background:#4da3ff;
+  color:#000;
+  cursor:pointer;
+}
+
+#msgCopiado{
+  color:#00ff7f;
+  text-align:center;
+  opacity:0;
+  transition:opacity .3s;
+  margin-top:8px;
+}
+</style>
 </head>
 <body>
-<script type="module" src="firebase-init.js"></script>
 
 <div class="header">
   <h2>Minha Equipe</h2>
-  <p class="muted">Acompanhe seus convidados</p>
+  <p style="color:#b3b3b3;margin:6px 0 0">Acompanhe seu desempenho</p>
 </div>
 
 <div class="container">
+
   <div class="card">
-    <h3 id="meuNome">-</h3>
-    <div class="muted">Seu link de convite</div>
-    <div style="margin-top:8px"><input id="linkFinal" readonly></div>
-    <div style="margin-top:8px"><button id="btnCopiar">Copiar Código</button></div>
-    <div id="msgCopiado" style="color:#00ff7f;opacity:0;transition:opacity .3s;margin-top:8px">Copiado!</div>
+    <h3 id="bonus" style="color:#4da3ff;margin:0">0</h3>
+    <div style="color:#b3b3b3">BÔNUS</div>
   </div>
 
   <div class="card">
-    <h3>Seus convidados</h3>
-    <div id="teamContainer" class="team-list"></div>
+    <h3 id="ativosCampo" style="color:#4da3ff;margin:0">0</h3>
+    <div style="color:#b3b3b3">ATIVOS</div>
   </div>
+
+  <div class="card">
+    <h3 id="membroCampo" style="color:#4da3ff;margin:0">0</h3>
+    <div style="color:#b3b3b3">CONVIDADOS</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 8px">Seu Código de Convite</h3>
+    <input id="linkFinal" readonly>
+    <button id="btnCopiar">Copiar Código</button>
+    <div id="msgCopiado">Código copiado!</div>
+  </div>
+
 </div>
 
 <script type="module">
-import { db } from './firebase-init.js';
-import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-const userData = JSON.parse(localStorage.getItem('vast_userdata') || 'null');
-if(!userData){ window.location.href = 'index.html'; throw ''; }
-const myUid = userData.uid;
+  const firebaseConfig = {
+    apiKey: "AIzaSyAcVPgUHbL4N9U1-H68klmGKWQF-YGleyc",
+    authDomain: "vastbitloud-2872a.firebaseapp.com",
+    projectId: "vastbitloud-2872a",
+    storageBucket: "vastbitloud-2872a.firebasestorage.app",
+    messagingSenderId: "952931184412",
+    appId: "1:952931184412:web:ee2a0e38826c30dd0cd4d9",
+    measurementId: "G-KWVQ0CFHW2"
+  };
 
-const meuNomeEl = document.getElementById('meuNome');
-const linkFinal = document.getElementById('linkFinal');
-const teamContainer = document.getElementById('teamContainer');
-const msg = document.getElementById('msgCopiado');
-const btnCopiar = document.getElementById('btnCopiar');
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-(async function loadProfile(){
-  const userSnap = await getDoc(doc(db, 'users', myUid));
-  if(!userSnap.exists()){ teamContainer.innerHTML = '<div class="muted">Perfil não encontrado.</div>'; return; }
-  const me = userSnap.data();
-  meuNomeEl.textContent = me.user || me.phone || 'Você';
-  const base = location.origin + location.pathname.replace(/[^/]*$/,'');
-  linkFinal.value = `${base}index.html?ref=${me.myCode}`;
-})();
+  const userData = JSON.parse(localStorage.getItem('vast_userdata')||'null');
+  if(!userData){ window.location.href='index.html'; }
 
-btnCopiar.addEventListener('click', ()=>{
-  linkFinal.select();
-  document.execCommand('copy');
-  msg.style.opacity = 1;
-  setTimeout(()=> msg.style.opacity = 0,1400);
-});
+  const codigo = userData.myCode || '';
 
-async function loadTeam(){
-  const teamCol = collection(db, `users/${myUid}/team`);
-  const teamSnap = await getDocs(teamCol);
-  if(teamSnap.empty){ teamContainer.innerHTML = '<div class="muted">Nenhum convidado ainda.</div>'; return; }
-  teamContainer.innerHTML = '';
-  for(const docItem of teamSnap.docs){
-    const memberUid = docItem.id;
-    const userDoc = await getDoc(doc(db, 'users', memberUid));
-    if(userDoc.exists()){
-      const m = userDoc.data();
-      const el = document.createElement('div');
-      el.className = 'member';
-      el.innerHTML = `<strong>${m.user || m.phone}</strong><div class="muted">Telefone: ${m.phone}</div><div class="muted">Cadastrado: ${new Date(m.createdAt).toLocaleString()}</div>`;
-      teamContainer.appendChild(el);
-    }
+  document.getElementById('linkFinal').value =
+    "https://vastbitloud.github.io/vastbitloud-login/?codigo=" + codigo;
+
+  document.getElementById('btnCopiar').addEventListener('click', ()=>{
+    const campo=document.getElementById('linkFinal');
+    campo.select();
+    document.execCommand('copy');
+    const msg=document.getElementById('msgCopiado');
+    msg.style.opacity=1;
+    setTimeout(()=>msg.style.opacity=0,1600);
+  });
+
+  async function carregarEquipe(){
+    let count = 0;
+
+    const snap = await getDocs(collection(db, "teams"));
+
+    snap.forEach(doc=>{
+      if(doc.data().owner === codigo){
+        count++;
+      }
+    });
+
+    document.getElementById('membroCampo').textContent = count;
   }
-}
 
-loadTeam();
+  carregarEquipe();
 </script>
+
 </body>
 </html>
