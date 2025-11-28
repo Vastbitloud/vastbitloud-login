@@ -2,22 +2,23 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Vastbitloud - Login / Cadastro</title>
 
 <style>
 body{
   margin:0;
   padding:0;
-  height:100%;
+  min-height:100vh; /* Centraliza perfeitamente no celular */
   font-family:Arial;
   color:#fff;
+
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
 
-  /* FUNDO 4K BRILHANTE */
-  background:url('bg-login.png') no-repeat center center fixed;
+  background:url('bg-login.png') no-repeat center center;
   background-size:cover;
 }
 
@@ -29,6 +30,12 @@ body{
   border-radius:12px;
   box-shadow:0 8px 30px rgba(0,0,0,.45);
   backdrop-filter:blur(6px);
+  margin:20px; /* garante espaço seguro em telas pequenas */
+}
+
+h2{
+  margin-top:0;
+  text-align:center;
 }
 
 input{
@@ -56,7 +63,8 @@ button{
 a{
   color:#66aaff;
   display:block;
-  margin-top:10px;
+  margin-top:12px;
+  text-align:center;
   cursor:pointer;
 }
 
@@ -122,7 +130,17 @@ select{
   function showMessage(msg, ok=false){
     const d=document.createElement('div');
     d.textContent=msg;
-    Object.assign(d.style,{position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',padding:'10px 14px',background:ok?'#4CAF50':'#ff4d4d',color:'#fff',borderRadius:'8px',zIndex:9999});
+    Object.assign(d.style,{
+      position:'fixed',
+      top:'18px',
+      left:'50%',
+      transform:'translateX(-50%)',
+      padding:'10px 14px',
+      background:ok?'#4CAF50':'#ff4d4d',
+      color:'#fff',
+      borderRadius:'8px',
+      zIndex:9999
+    });
     document.body.appendChild(d);
     setTimeout(()=>d.remove(),2200);
   }
