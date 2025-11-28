@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Minha Equipe</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="module" src="firebase-init.js"></script>
+
+<div class="header">
+  <h2>Minha Equipe</h2>
+  <p class="muted">Acompanhe seus convidados</p>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h3 id="meuNome">-</h3>
+    <div class="muted">Seu link de convite</div>
+    <div style="margin-top:8px"><input id="linkFinal" readonly></div>
+    <div style="margin-top:8px"><button id="btnCopiar">Copiar Código</button></div>
+    <div id="msgCopiado" style="color:#00ff7f;opacity:0;transition:opacity .3s;margin-top:8px">Copiado!</div>
+  </div>
+
+  <div class="card">
+    <h3>Seus convidados</h3>
+    <div id="teamContainer" class="team-list"></div>
+  </div>
+</div>
+
+<script type="module">
+import { db } from './firebase-init.js';
+import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+const userData = JSON.parse(localStorage.getItem('vast_userdata') || 'null');
+if(!userData){ window.location.href = 'index.html'; throw ''; }
+const myUid = userData.uid;
+
+const meuNomeEl = document.getElementById('meuNome');
+const linkFinal = document.getElementById('linkFinal');
+const teamContainer = document.getElementById('teamContainer');
+const msg = document.getElementById('msgCopiado');
+const btnCopiar = document.getElementById('btnCopiar');
+
+(async function loadProfile(){
+  const userSnap = await getDoc(doc(db, 'users', myUid));
+  if(!userSnap.exists()){ teamContainer.innerHTML = '<div class="muted">Perfil não encontrado.</div>'; return; }
+  const me = userSnap.data();
+  meuNomeEl.textContent = me.user || me.phone || 'Você';
+  const base = location.origin + location.pathname.replace(/[^/]*$/,'');
+  linkFinal.value = `${base}index.html?ref=${me.myCode}`;
+})();
+
+btnCopiar.addEventListener('click', ()=>{
+  linkFinal.select();
+  document.execCommand('copy');
+  msg.style.opacity = 1;
+  setTimeout(()=> msg.style.opacity = 0,1400);
+});
+
+async function loadTeam(){
+  const teamCol = collection(db, `users/${myUid}/team`);
+  const teamSnap = await getDocs(teamCol);
+  if(teamSnap.empty){ teamContainer.innerHTML = '<div class="muted">Nenhum convidado ainda.</div>'; return; }
+  teamContainer.innerHTML = '';
+  for(const docItem of teamSnap.docs){
+    const memberUid = docItem.id;
+    const userDoc = await getDoc(doc(db, 'users', memberUid));
+    if(userDoc.exists()){
+      const m = userDoc.data();
+      const el = document.createElement('div');
+      el.className = 'member';
+      el.innerHTML = `<strong>${m.user || m.phone}</strong><div class="muted">Telefone: ${m.phone}</div><div class="muted">Cadastrado: ${new Date(m.createdAt).toLocaleString()}</div>`;
+      teamContainer.appendChild(el);
+    }
+  }
+}
+
+loadTeam();
+</script>
+</body>
+</html>

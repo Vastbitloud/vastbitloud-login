@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vastbitloud - Login / Cadastro</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="module" src="firebase-init.js"></script>
+
+<div class="card" id="wrap">
+  <div id="loginBox">
+    <h2>Entrar</h2>
+    <input id="phoneLogin" type="text" placeholder="Telefone (ex: 5511999999999)">
+    <input id="passLogin" type="password" placeholder="Senha">
+    <select id="destinationSelect">
+      <option value="equipe">Minha Equipe</option>
+      <option value="vastbitloud">Vastbitloud</option>
+    </select>
+    <button id="btnLogin">Entrar</button>
+    <a id="linkShowRegister">Criar conta</a>
+    <p class="muted">Protótipo: usa Firestore para salvar usuários.</p>
+  </div>
+
+  <div id="registerBox" class="hidden">
+    <h2>Criar Conta</h2>
+    <input id="userReg" type="text" placeholder="Nome de Usuário">
+    <input id="phoneReg" type="text" placeholder="Telefone (ex: 5511999999999)">
+    <input id="passReg" type="password" placeholder="Senha">
+    <input id="inviteCodeReg" type="text" placeholder="Código de Convite (opcional)">
+    <button id="btnRegister">Cadastrar</button>
+    <a id="linkShowLogin">Já tenho conta</a>
+    <p class="muted">Se você acessou por um link de convite, o código aparecerá automaticamente.</p>
+  </div>
+</div>
+
+<script type="module">
+import { db } from './firebase-init.js';
+import { doc, setDoc, getDoc, collection } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+function showMessage(msg, ok=false){
+  const d=document.createElement('div');
+  d.textContent=msg;
+  Object.assign(d.style,{position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',padding:'10px 14px',background:ok?'#4CAF50':'#ff4d4d',color:'#fff',borderRadius:'8px',zIndex:9999});
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),2400);
+}
+
+const loginBox=document.getElementById('loginBox');
+const registerBox=document.getElementById('registerBox');
+document.getElementById('linkShowRegister').addEventListener('click', ()=>{ loginBox.classList.add('hidden'); registerBox.classList.remove('hidden'); });
+document.getElementById('linkShowLogin').addEventListener('click', ()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden'); });
+
+const params = new URLSearchParams(window.location.search);
+const refCode = params.get('ref');
+if(refCode) document.getElementById('inviteCodeReg').value = refCode;
+
+// Cadastro
+document.getElementById('btnRegister').addEventListener('click', async ()=>{
+  const user = document.getElementById('userReg').value.trim();
+  const phone = document.getElementById('phoneReg').value.trim();
+  const pass = document.getElementById('passReg').value.trim();
+  const invitedCode = document.getElementById('inviteCodeReg').value.trim() || null;
+
+  if(!user || !phone || !pass){ showMessage('Preencha todos os campos!'); return; }
+
+  const newUserRef = doc(collection(db, 'users'));
+  const uid = newUserRef.id;
+  const myCode = "VAST-" + Math.random().toString(36).substring(2,8).toUpperCase();
+  const now = Date.now();
+
+  // procurar inviterUid
+  let inviterUid = null;
+  if(invitedCode){
+    const codeDoc = await getDoc(doc(db, 'codes', invitedCode));
+    if(codeDoc.exists()){
+      inviterUid = codeDoc.data().uid;
+    }
+  }
+
+  const userObj = { uid, user, phone, pass, myCode, invitedByUid: inviterUid || null, createdAt: now };
+  await setDoc(newUserRef, userObj);
+  await setDoc(doc(db, 'codes', myCode), { uid });
+  await setDoc(doc(db, 'phoneToUid', phone), { uid });
+
+  if(inviterUid){
+    await setDoc(doc(db, 'users', inviterUid, 'team', uid), { uid, addedAt: now });
+  }
+
+  localStorage.setItem('vast_userdata', JSON.stringify({ uid, user, phone, myCode }));
+  showMessage('Conta criada com sucesso!', true);
+  setTimeout(()=> window.location.href = 'equipe.html', 900);
+});
+
+// Login
+document.getElementById('btnLogin').addEventListener('click', async ()=>{
+  const phone = document.getElementById('phoneLogin').value.trim();
+  const pass = document.getElementById('passLogin').value.trim();
+  if(!phone || !pass){ showMessage('Preencha todos os campos!'); return; }
+
+  const phoneDoc = await getDoc(doc(db, 'phoneToUid', phone));
+  if(!phoneDoc.exists()){ showMessage('Telefone não encontrado!'); return; }
+  const uid = phoneDoc.data().uid;
+  const userDoc = await getDoc(doc(db, 'users', uid));
+  if(!userDoc.exists()){ showMessage('Usuário não encontrado!'); return; }
+  const userData = userDoc.data();
+  if(userData.pass !== pass){ showMessage('Senha incorreta!'); return; }
+
+  localStorage.setItem('vast_userdata', JSON.stringify({ uid, user: userData.user, phone, myCode: userData.myCode }));
+  showMessage('Login realizado!', true);
+
+  const dest = document.getElementById('destinationSelect').value;
+  setTimeout(()=>{
+    if(dest === 'vastbitloud') window.location.href = 'https://sites.google.com/view/vastbitloud';
+    else window.location.href = 'equipe.html';
+  },700);
+});
+</script>
+</body>
+</html>
