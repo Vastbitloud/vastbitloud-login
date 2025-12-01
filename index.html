@@ -9,7 +9,7 @@
 body{
   margin:0;
   padding:0;
-  min-height:100vh; /* Centraliza perfeitamente no celular */
+  min-height:100vh;
   font-family:Arial;
   color:#fff;
 
@@ -30,7 +30,7 @@ body{
   border-radius:12px;
   box-shadow:0 8px 30px rgba(0,0,0,.45);
   backdrop-filter:blur(6px);
-  margin:20px; /* garante espaço seguro em telas pequenas */
+  margin:20px;
 }
 
 h2{
@@ -91,7 +91,8 @@ select{
   
   <select id="destinationSelect">
     <option value="equipe">Minha Equipe</option>
-    <option value="vastbitloud">Vastbitloud</option>
+    <!-- texto e value atualizados corretamente -->
+    <option value="pagina_inicial">Página inicial</option>
   </select>
   
   <button id="btnLogin">Entrar</button>
@@ -217,8 +218,9 @@ select{
 
     const dest = document.getElementById('destinationSelect').value;
 
+    // redirecionamento atualizado para checar o novo value "pagina_inicial"
     setTimeout(()=>{
-      if(dest === 'vastbitloud'){
+      if(dest === 'pagina_inicial'){
         window.location.href = 'https://sites.google.com/view/vastbitloud';
       } else {
         window.location.href = 'equipe.html';
